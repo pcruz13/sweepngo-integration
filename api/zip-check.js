@@ -1,11 +1,27 @@
+function setCors(res) {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // or your site origin
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
+
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  setCors(res);
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
   if (!process.env.SWEEP_API_TOKEN) {
-    return res.status(500).json({ error: 'server_misconfig', note: 'SWEEP_API_TOKEN is not set in Vercel env' });
+    return res.status(500).json({ error: 'server_misconfig', note: 'SWEEP_API_TOKEN is not set' });
   }
 
   try {
+    // Parse JSON body safely
     let zip = '';
     try {
       if (req.body && typeof req.body === 'object') {
