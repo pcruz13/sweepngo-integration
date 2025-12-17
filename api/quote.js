@@ -32,7 +32,6 @@ export default async function handler(req, res) {
     url.searchParams.set('zip_code', zip_code);
     url.searchParams.set('number_of_dogs', number_of_dogs);
     url.searchParams.set('clean_up_frequency', clean_up_frequency);
-    url.searchParams.set('last_time_yard_was_thoroughly_cleaned', last_time_yard_was_thoroughly_cleaned);
 
     const upstream = await fetch(url.toString(), {
       method: 'GET',
