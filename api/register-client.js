@@ -6,7 +6,6 @@ function setCors(res) {
 
 export default async function handler(req, res) {
   setCors(res);
-
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -24,12 +23,18 @@ export default async function handler(req, res) {
       cross_sell_id
     } = body;
 
-    if (!email || !first_name || !last_name || !address || !city || !state || !zip_code) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
+    const missing = [];
+    if (!email) missing.push('email');
+    if (!first_name) missing.push('first_name');
+    if (!last_name) missing.push('last_name');
+    if (!address) missing.push('address');
+    if (!city) missing.push('city');
+    if (!state) missing.push('state');
+    if (!zip_code) missing.push('zip_code');
+    if (!cross_sell_id) missing.push('cross_sell_id');
 
-    if (!cross_sell_id) {
-      return res.status(400).json({ error: 'Missing required field: cross_sell_id' });
+    if (missing.length) {
+      return res.status(400).json({ error: 'missing_fields', missing });
     }
 
     const payload = {
